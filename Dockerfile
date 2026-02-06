@@ -1,9 +1,12 @@
+# -------- BUILD STAGE --------
+FROM eclipse-temurin:21-jdk AS builder
+WORKDIR /build
+COPY . .
+RUN ./mvnw clean package -DskipTests
+
+# -------- RUN STAGE --------
 FROM eclipse-temurin:21-jdk
-
 WORKDIR /app
-
-COPY target/*.jar app.jar
-
+COPY --from=builder /build/target/*.jar app.jar
 EXPOSE 9090
-
 ENTRYPOINT ["java","-jar","app.jar"]
